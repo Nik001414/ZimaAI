@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroAI - Advanced AI Chat Powered by Solana</title>
+    <link rel="stylesheet" href="main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #9945FF;
+            --secondary: #14F195;
+            --dark: #0F0F1A;
+            --light: #F8F8FF;
+            --gray: #A1A1AA;
+            --dark-gray: #27272A;
+            --accent: #FF6BFF;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* Новые анимации */
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(153, 69, 255, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(153, 69, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(153, 69, 255, 0); }
+        }
+        
+        @keyframes shine {
+            0% { background-position: -500px; }
+            100% { background-position: 500px; }
+        }
+        
+        /* Бегущая строка */
+        .ticker-wrap {
+            position: relative;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            color: var(--dark);
+            padding: 15px 0;
+            overflow: hidden;
+            font-weight: 600;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(153, 69, 255, 0.3);
+        }
+        
+        .ticker {
+            display: inline-block;
+            white-space: nowrap;
+            padding-right: 100%;
+            animation: ticker 30s linear infinite;
+        }
+        
+        @keyframes ticker {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+        
+        .ticker-item {
+            display: inline-block;
+            padding: 0 50px;
+            position: relative;
+        }
+        
+        .ticker-item:after {
+            content: "•";
+            position: absolute;
+            right: -5px;
+            color: var(--dark);
+        }
+        
+        /* Подсвеченные элементы */
+        .highlight {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .highlight:before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            background: linear-gradient(45deg, var(--primary), var(--accent), var(--secondary));
+            z-index: -1;
+            border-radius: 10px;
+            opacity: 0.7;
+            filter: blur(10px);
+        }
+        
+        .glow-on-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .glow-on-hover:hover {
+            box-shadow: 0 0 20px rgba(153, 69, 255, 0.6);
+            transform: translateY(-3px);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header с новой анимацией */
+        header {
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            background-color: rgba(15, 15, 26, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        header.scrolled {
+            padding: 10px 0;
+            background-color: rgba(15, 15, 26, 0.95);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            position: relative;
+            padding: 5px 10px;
+        }
+        
+        .logo:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 2px solid transparent;
+            border-image: linear-gradient(45deg, var(--primary), var(--secondary));
+            border-image-slice: 1;
+            border-radius: 5px;
+            animation: shine 3s infinite linear;
+            opacity: 0.5;
+        }
+        
+        /* Остальные стили остаются такими же, как в предыдущем коде */
+        /* ... */
+        
+        /* Добавим анимацию к токен-карточкам */
+        .token-card {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .token-card:before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(153, 69, 255, 0),
+                rgba(153, 69, 255, 0),
+                rgba(153, 69, 255, 0.3),
+                rgba(153, 69, 255, 0)
+            );
+            transform: rotate(30deg);
+            animation: shine 3s infinite;
+        }
+        
+        /* Анимированный фон для героя */
+        .hero {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 50%, rgba(153, 69, 255, 0.1) 0%, transparent 40%),
+                        radial-gradient(circle at 70% 70%, rgba(20, 241, 149, 0.1) 0%, transparent 40%);
+            z-index: -1;
+        }
+        
+        /* Пульсирующая кнопка */
+        .pulse-btn {
+            animation: pulse 2s infinite;
+        }
+        
+        /* Эффект параллакса */
+        .parallax-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path fill="rgba(153,69,255,0.05)" d="M0,0 L100,0 L100,100 L0,100 Z"/></svg>');
+            background-size: 300px 300px;
+            z-index: -1;
+            opacity: 0.5;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        header {
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            background-color: rgba(15, 15, 26, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        
+        .connect-wallet {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: var(--dark);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .connect-wallet:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(153, 69, 255, 0.3);
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 180px 0 100px;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 64px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, var(--light), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .hero p {
+            font-size: 20px;
+            color: var(--gray);
+            max-width: 700px;
+            margin: 0 auto 40px;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 40px;
+        }
+        
+        .primary-btn {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: var(--dark);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .primary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(153, 69, 255, 0.3);
+        }
+        
+        .secondary-btn {
+            background: transparent;
+            color: var(--light);
+            border: 1px solid var(--primary);
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .secondary-btn:hover {
+            background: rgba(153, 69, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        /* Chat Section */
+        .chat-section {
+            background: linear-gradient(180deg, rgba(15, 15, 26, 0) 0%, rgba(15, 15, 26, 1) 100%);
+            padding: 100px 0;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .section-header h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        
+        .section-header p {
+            font-size: 18px;
+            color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .chat-container {
+            background: rgba(39, 39, 42, 0.5);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            max-width: 900px;
+            margin: 0 auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .chat-header {
+            padding: 20px;
+            background: rgba(15, 15, 26, 0.7);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+        }
+        
+        .chat-header .ai-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+        
+        .chat-header .ai-name {
+            font-weight: 600;
+        }
+        
+        .chat-header .ai-status {
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+        }
+        
+        .ai-status .status-dot {
+            width: 10px;
+            height: 10px;
+            background-color: var(--secondary);
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .ai-status .status-text {
+            font-size: 14px;
+            color: var(--secondary);
+        }
+        
+        .chat-messages {
+            height: 500px;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .message {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        
+        .ai-message {
+            justify-content: flex-start;
+        }
+        
+        .user-message {
+            justify-content: flex-end;
+        }
+        
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .ai-message .message-avatar {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+        
+        .user-message .message-avatar {
+            background: var(--dark-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .message-content {
+            max-width: 70%;
+        }
+        
+        .ai-message .message-content {
+            background: rgba(39, 39, 42, 0.8);
+            padding: 15px;
+            border-radius: 0 12px 12px 12px;
+        }
+        
+        .user-message .message-content {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: var(--dark);
+            padding: 15px;
+            border-radius: 12px 0 12px 12px;
+            font-weight: 500;
+        }
+        
+        .chat-input {
+            display: flex;
+            padding: 20px;
+            background: rgba(15, 15, 26, 0.7);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .chat-input input {
+            flex: 1;
+            background: rgba(39, 39, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: var(--light);
+            font-size: 16px;
+            outline: none;
+        }
+        
+        .chat-input input::placeholder {
+            color: var(--gray);
+        }
+        
+        .chat-input button {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: var(--dark);
+            border: none;
+            padding: 0 25px;
+            margin-left: 15px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .chat-input button:hover {
+            transform: translateY(-2px);
+        }
+        
+        /* Token Section */
+        .token-section {
+            padding: 100px 0;
+            background: linear-gradient(180deg, rgba(15, 15, 26, 1) 0%, rgba(9, 9, 16, 1) 100%);
+        }
+        
+        .token-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .token-card {
+            background: rgba(39, 39, 42, 0.5);
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .token-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(153, 69, 255, 0.2);
+        }
+        
+        .token-card .icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .token-card h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+        
+        .token-card p {
+            color: var(--gray);
+            margin-bottom: 20px;
+        }
+        
+        .token-card .learn-more {
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+        
+        .token-card .learn-more svg {
+            margin-left: 5px;
+            transition: transform 0.3s;
+        }
+        
+        .token-card .learn-more:hover svg {
+            transform: translateX(3px);
+        }
+        
+        /* How to Buy Section */
+        .how-to-buy {
+            padding: 100px 0;
+            text-align: center;
+        }
+        
+        .steps {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .step {
+            background: rgba(39, 39, 42, 0.5);
+            border-radius: 16px;
+            padding: 30px;
+            width: 200px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+        
+        .step-number {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .step h4 {
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .step p {
+            color: var(--gray);
+            font-size: 14px;
+        }
+        
+        /* Footer */
+        footer {
+            background: #090910;
+            padding: 60px 0 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-column h4 {
+            font-family: 'Space Grotesk', sans-serif;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-column ul li a {
+            color: var(--gray);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-column ul li a:hover {
+            color: var(--light);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: rgba(39, 39, 42, 0.5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+        
+        .social-links a:hover {
+            background: var(--primary);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--gray);
+            font-size: 14px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 42px;
+            }
+            
+            .hero p {
+                font-size: 18px;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .message-content {
+                max-width: 85%;
+            }
+            
+            .steps {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+    <!-- Header -->
+    <header id="main-header">
+        <div class="container">
+            <nav>
+                <div class="logo highlight">NeuroAI</div>
+                <div class="nav-links">
+                    <a href="#chat" class="glow-on-hover">AI Chat</a>
+                    <a href="#token" class="glow-on-hover">Token</a>
+                    <a href="#how-to-buy" class="glow-on-hover">How to Buy</a>
+                    <a href="#about" class="glow-on-hover">About</a>
+                </div>
+                <button class="connect-wallet pulse-btn">Connect Wallet</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section с анимацией -->
+    <section class="hero">
+        <div class="parallax-bg" data-parallax="0.2"></div>
+        <div class="container">
+            <h1 class="highlight" style="display: inline-block; padding: 0 15px;">Experience Next-Gen AI with NeuroToken</h1>
+            <p style="position: relative; display: inline-block; padding: 5px 10px; background: rgba(39, 39, 42, 0.7); border-radius: 8px;">
+                NeuroAI combines advanced artificial intelligence with blockchain technology on Solana
+            </p>
+            <div class="cta-buttons">
+                <button class="primary-btn glow-on-hover" style="animation: float 3s ease-in-out infinite;">Start Chatting</button>
+                <button class="secondary-btn glow-on-hover">Learn About NTK</button>
+            </div>
+
+
+
+            <!-- Анимированные частицы -->
+            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: -1;">
+                <div class="particle" style="position: absolute; width: 5px; height: 5px; background: var(--primary); border-radius: 50%; top: 20%; left: 10%; animation: float 6s ease-in-out infinite;"></div>
+                <div class="particle" style="position: absolute; width: 8px; height: 8px; background: var(--secondary); border-radius: 50%; top: 60%; left: 80%; animation: float 8s ease-in-out infinite 2s;"></div>
+                <div class="particle" style="position: absolute; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; top: 30%; left: 50%; animation: float 7s ease-in-out infinite 1s;"></div>
+            </div>
+        </div>
+    </section>
+
+
+ <!-- Новый раздел с подсвеченными цифрами -->
+    <section class="stats-section" style="padding: 80px 0; background: rgba(39, 39, 42, 0.3);">
+        <div class="container">
+            <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
+                <div class="stat-card" style="text-align: center; padding: 30px; margin: 15px; position: relative;">
+                    <div class="highlight" style="font-size: 42px; font-weight: 700; margin-bottom: 10px; padding: 0 15px;">50,000+</div>
+                    <div style="font-size: 16px; color: var(--gray);">Active Users</div>
+                </div>
+                <div class="stat-card" style="text-align: center; padding: 30px; margin: 15px; position: relative;">
+                    <div class="highlight" style="font-size: 42px; font-weight: 700; margin-bottom: 10px; padding: 0 15px;">1.2M</div>
+                    <div style="font-size: 16px; color: var(--gray);">Daily Requests</div>
+                </div>
+                <div class="stat-card" style="text-align: center; padding: 30px; margin: 15px; position: relative;">
+                    <div class="highlight" style="font-size: 42px; font-weight: 700; margin-bottom: 10px; padding: 0 15px;">$0.42</div>
+                    <div style="font-size: 16px; color: var(--gray);">Token Price</div>
+                </div>
+                <div class="stat-card" style="text-align: center; padding: 30px; margin: 15px; position: relative;">
+                    <div class="highlight" style="font-size: 42px; font-weight: 700; margin-bottom: 10px; padding: 0 15px;">15%</div>
+                    <div style="font-size: 16px; color: var(--gray);">Staking APY</div>
+                </div>
+            </div>
+        </div>
+    </section>
+            
+
+<!-- Бегущая строка -->
+    <div class="ticker-wrap">
+        <div class="ticker">
+            <span class="ticker-item">🔥 НОВОЕ: Получите 100 NTK бонусом при первом подключении кошелька!</span>
+            <span class="ticker-item">🚀 Токен NTK вырос на 27% за последнюю неделю</span>
+            <span class="ticker-item">💎 Стейкинг NTK теперь доступен с APY до 15%</span>
+            <span class="ticker-item">🎉 Более 50,000 пользователей NeuroAI</span>
+        </div>
+    </div>
+
+    <!-- Chat Section -->
+    <section id="chat" class="chat-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>NeuroAI Chat Interface</h2>
+                <p>Interact with our advanced AI model. Your conversations are processed on-chain using Solana for maximum transparency.</p>
+            </div>
+            <div class="chat-container">
+                <div class="chat-header">
+                    <div class="ai-avatar">NT</div>
+                    <div class="ai-name">NeuroAI Assistant</div>
+                    <div class="ai-status">
+                        <div class="status-dot"></div>
+                        <div class="status-text">Online</div>
+                    </div>
+                </div>
+                <div class="chat-messages" id="chat-messages">
+                    <div class="message ai-message">
+                        <div class="message-avatar"></div>
+                        <div class="message-content">
+                            Hello! I'm NeuroAI, an advanced AI assistant powered by blockchain technology. How can I help you today?
+                        </div>
+                    </div>
+                    <div class="message user-message">
+                        <div class="message-avatar">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z" fill="currentColor"/>
+                                <path d="M12 14C7.58172 14 4 17.5817 4 22H20C20 17.5817 16.4183 14 12 14Z" fill="currentColor"/>
+                            </svg>
+                        </div>
+                        <div class="message-content">
+                            Tell me about NeuroToken on Solana
+                        </div>
+                    </div>
+                    <div class="message ai-message">
+                        <div class="message-avatar"></div>
+                        <div class="message-content">
+                            NeuroToken (NTK) is our utility token on the Solana blockchain that powers the NeuroAI ecosystem. It's used for:<br><br>
+                            • Premium AI interactions<br>
+                            • Governance voting<br>
+                            • Staking rewards<br>
+                            • Access to advanced features<br><br>
+                            With fast transactions and low fees thanks to Solana's high-performance blockchain.
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-input">
+                    <input type="text" placeholder="Message NeuroAI..." id="user-input">
+                    <button id="send-btn">Send</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Token Section -->
+    <section id="token" class="token-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>NeuroToken (NTK) Ecosystem</h2>
+                <p>Our native token powers the entire NeuroAI platform, creating a sustainable economy around AI services.</p>
+            </div>
+            <div class="token-grid">
+                <div class="token-card">
+                    <div class="icon">
+                        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M8 14C8 14 9.5 16 12 16C14.5 16 16 14 16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M9 9H9.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M15 9H15.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3>AI Interactions</h3>
+                    <p>Use NTK to access premium AI features, extended conversations, and specialized knowledge domains.</p>
+                    <a href="#" class="learn-more">Learn more <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12 5L19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg></a>
+                </div>
+                <div class="token-card">
+                    <div class="icon">
+                        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3>Staking Rewards</h3>
+                    <p>Stake your NTK to earn passive income and get access to exclusive AI models and features.</p>
+                    <a href="#" class="learn-more">Learn more <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12 5L19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg></a>
+                </div>
+                <div class="token-card">
+                    <div class="icon">
+                        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 8V16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M8 12H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3>Governance</h3>
+                    <p>NTK holders vote on key platform decisions, model updates, and feature prioritization.</p>
+                    <a href="#" class="learn-more">Learn more <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12 5L19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How to Buy Section -->
+    <section id="how-to-buy" class="how-to-buy">
+        <div class="container">
+            <div class="section-header">
+                <h2>How to Buy NeuroToken</h2>
+                <p>Get NTK in just a few simple steps and join the NeuroAI ecosystem.</p>
+            </div>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 1V23" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M17 5H9.5C8.57174 5 7.6815 5.36875 7.02513 6.02513C6.36875 6.6815 6 7.57174 6 8.5C6 9.42826 6.36875 10.3185 7.02513 10.9749C7.6815 11.6313 8.57174 12 9.5 12H14.5C15.4283 12 16.3185 12.3687 16.9749 13.0251C17.6313 13.6815 18 14.5717 18 15.5C18 16.4283 17.6313 17.3185 16.9749 17.9749C16.3185 18.6313 15.4283 19 14.5 19H6" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <h4>Get SOL</h4>
+                    <p>Purchase Solana (SOL) from any major exchange like Binance, Coinbase, or FTX.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 12C21 13.1819 20.7672 14.3522 20.3149 15.4442C19.8626 16.5361 19.1997 17.5282 18.364 18.364C17.5282 19.1997 16.5361 19.8626 15.4442 20.3149C14.3522 20.7672 13.1819 21 12 21C10.8181 21 9.64778 20.7672 8.55585 20.3149C7.46392 19.8626 6.47177 19.1997 5.63604 18.364C4.80031 17.5282 4.13738 16.5361 3.68508 15.4442C3.23279 14.3522 3 13.1819 3 12C3 9.61305 3.94821 7.32387 5.63604 5.63604C7.32387 3.94821 9.61305 3 12 3C14.3869 3 16.6761 3.94821 18.364 5.63604C20.0518 7.32387 21 9.61305 21 12Z" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <h4>Set Up Wallet</h4>
+                    <p>Install a Solana wallet like Phantom or Solflare and transfer your SOL there.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7 21H17C18.1046 21 19 20.1046 19 19V5C19 4.46957 18.7893 3.96086 18.4142 3.58579C18.0391 3.21071 17.5304 3 17 3H7C5.89543 3 5 3.89543 5 5V19C5 20.1046 5.89543 21 7 21Z" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M16 7H18C18.5304 7 19.0391 7.21071 19.4142 7.58579C19.7893 7.96086 20 8.46957 20 9V11" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M8 7H6C5.46957 7 4.96086 7.21071 4.58579 7.58579C4.21071 7.96086 4 8.46957 4 9V11" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12 17V17.01" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <h4>Connect to DEX</h4>
+                    <p>Connect your wallet to a decentralized exchange like Raydium or Orca.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M8 14C8 14 9.5 16 12 16C14.5 16 16 14 16 14" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M15 9H15.01" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M9 9H9.01" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <h4>Swap for NTK</h4>
+                    <p>Swap your SOL for NTK using our token address: Ea...4dR</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h4>NeuroAI</h4>
+                    <p>Advanced AI powered by blockchain technology on Solana.</p>
+                    <div class="social-links">
+                        <a href="#">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M18 2H15C13.6739 2 12.4021 2.52678 11.4645 3.46447C10.5268 4.40215 10 5.67392 10 7V10H7V14H10V22H14V14H17L18 10H14V7C14 6.73478 14.1054 6.48043 14.2929 6.29289C14.4804 6.10536 14.7348 6 15 6H18V2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                                                <a href="#">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M22.46 6C21.69 6.35 20.86 6.58 20 6.69C20.88 6.16 21.56 5.32 21.88 4.31C21.05 4.81 20.13 5.16 19.16 5.36C18.37 4.5 17.26 4 16 4C13.65 4 11.73 5.92 11.73 8.29C11.73 8.63 11.77 8.96 11.84 9.27C8.28 9.09 5.11 7.38 3 4.79C2.63 5.42 2.42 6.16 2.42 6.94C2.42 8.43 3.17 9.75 4.33 10.5C3.62 10.5 2.96 10.3 2.38 10C2.38 10 2.38 10 2.38 10.03C2.38 12.11 3.86 13.85 5.82 14.24C5.46 14.34 5.08 14.39 4.69 14.39C4.42 14.39 4.15 14.36 3.89 14.31C4.43 16 6 17.26 7.89 17.29C6.43 18.45 4.58 19.13 2.56 19.13C2.22 19.13 1.88 19.11 1.54 19.07C3.44 20.29 5.7 21 8.12 21C16 21 20.33 14.46 20.33 8.79C20.33 8.6 20.33 8.42 20.32 8.23C21.16 7.63 21.88 6.87 22.46 6Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                        <a href="#">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2.163C15.204 2.163 15.584 2.175 16.85 2.233C18.021 2.287 18.629 2.495 19.011 2.659C19.527 2.881 19.887 3.147 20.262 3.525C20.637 3.903 20.901 4.258 21.123 4.777C21.286 5.161 21.495 5.772 21.548 6.945C21.606 8.214 21.619 8.594 21.619 11.801C21.619 15.006 21.606 15.383 21.548 16.651C21.494 17.824 21.286 18.432 21.122 18.815C20.9 19.33 20.637 19.691 20.261 20.066C19.885 20.441 19.527 20.704 19.01 20.926C18.627 21.09 18.016 21.298 16.843 21.352C15.578 21.41 15.198 21.423 11.993 21.423C8.788 21.423 8.411 21.41 7.143 21.352C5.97 21.298 5.362 21.09 4.979 20.926C4.463 20.704 4.103 20.438 3.728 20.06C3.353 19.682 3.089 19.327 2.867 18.808C2.704 18.424 2.495 17.813 2.442 16.64C2.384 15.371 2.371 14.991 2.371 11.784C2.371 8.579 2.384 8.202 2.442 6.934C2.496 5.761 2.704 5.153 2.868 4.77C3.09 4.255 3.353 3.894 3.729 3.519C4.105 3.144 4.463 2.881 4.98 2.659C5.363 2.495 5.974 2.287 7.147 2.233C8.416 2.175 8.796 2.163 12.001 2.163H12ZM11.778 4C8.555 4 8.143 4.013 6.862 4.071C5.778 4.122 5.203 4.32 4.842 4.47C4.356 4.668 4.029 4.888 3.7 5.219C3.371 5.55 3.153 5.879 2.957 6.367C2.808 6.729 2.611 7.306 2.56 8.392C2.502 9.676 2.489 10.089 2.489 13.316C2.489 16.541 2.502 16.949 2.56 18.233C2.611 19.319 2.808 19.894 2.957 20.256C3.153 20.744 3.373 21.071 3.704 21.4C4.035 21.729 4.364 21.947 4.852 22.143C5.214 22.292 5.791 22.489 6.877 22.54C8.164 22.598 8.576 22.611 11.803 22.611C15.028 22.611 15.436 22.598 16.72 22.54C17.806 22.489 18.381 22.292 18.743 22.143C19.231 21.947 19.558 21.727 19.887 21.396C20.216 21.065 20.434 20.736 20.63 20.248C20.779 19.886 20.976 19.309 21.027 18.223C21.085 16.939 21.098 16.527 21.098 13.3C21.098 10.075 21.085 9.667 21.027 8.383C20.976 7.297 20.779 6.722 20.63 6.36C20.434 5.872 20.214 5.545 19.883 5.216C19.552 4.887 19.223 4.669 18.735 4.473C18.373 4.324 17.796 4.127 16.71 4.076C15.429 4.018 15.021 4.005 11.796 4.005L11.778 4ZM12 7.078C15.199 7.078 17.797 9.679 17.797 12.881C17.797 16.083 15.199 18.684 12 18.684C8.801 18.684 6.203 16.083 6.203 12.881C6.203 9.679 8.801 7.078 12 7.078ZM12 15.605C13.657 15.605 15 14.259 15 12.598C15 10.938 13.657 9.592 12 9.592C10.343 9.592 9 10.938 9 12.598C9 14.259 10.343 15.605 12 15.605ZM18.372 6.885C18.372 7.577 17.808 8.143 17.119 8.143C16.43 8.143 15.866 7.577 15.866 6.885C15.866 6.193 16.43 5.627 17.119 5.627C17.808 5.627 18.372 6.193 18.372 6.885Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                        <a href="#">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M21 5C21 6.65685 19.6569 8 18 8C16.3431 8 15 6.65685 15 5C15 3.34315 16.3431 2 18 2C19.6569 2 21 3.34315 21 5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M9 12C9 13.6569 7.65685 15 6 15C4.34315 15 3 13.6569 3 12C3 10.3431 4.34315 9 6 9C7.65685 9 9 10.3431 9 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M21 19C21 20.6569 19.6569 22 18 22C16.3431 22 15 20.6569 15 19C15 17.3431 16.3431 16 18 16C19.6569 16 21 17.3431 21 19Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M9 12H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M15 12V19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="#chat">AI Chat</a></li>
+                        <li><a href="#token">NeuroToken</a></li>
+                        <li><a href="#">API</a></li>
+                        <li><a href="#">Roadmap</a></li>
+                        <li><a href="#">Pricing</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">Whitepaper</a></li>
+                        <li><a href="#">GitHub</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Team</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Partners</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                        <li><a href="#">Disclaimer</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2023 NeuroAI. All rights reserved. Powered by Solana blockchain technology.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Simple chat functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatMessages = document.getElementById('chat-messages');
+            const userInput = document.getElementById('user-input');
+            const sendBtn = document.getElementById('send-btn');
+            
+            // Sample AI responses
+            const aiResponses = [
+                "NeuroToken (NTK) is the native utility token of our ecosystem, providing access to premium AI services on Solana.",
+                "You can stake NTK to earn passive income and get access to exclusive features.",
+                "The tokenomics of NTK include a total supply of 1 billion tokens, with 40% allocated for community rewards.",
+                "NTK holders can participate in governance votes to decide the future development of NeuroAI.",
+                "Transactions with NTK on Solana are fast and cost less than $0.01 each.",
+                "Our AI models are continuously improved based on user feedback and NTK holder votes."
+            ];
+            
+            // Connect wallet button
+            const connectWalletBtn = document.querySelector('.connect-wallet');
+            connectWalletBtn.addEventListener('click', function() {
+                alert('Wallet connection would be implemented with Solana Web3.js in a real application');
+            });
+            
+            // Send message function
+            function sendMessage() {
+                const message = userInput.value.trim();
+                if (message === '') return;
+                
+                // Add user message
+                addMessage(message, 'user');
+                userInput.value = '';
+                
+                // Simulate AI typing
+                setTimeout(() => {
+                    const typingIndicator = document.createElement('div');
+                    typingIndicator.className = 'message ai-message';
+                    typingIndicator.innerHTML = `
+                        <div class="message-avatar"></div>
+                        <div class="message-content">
+                            <div class="typing">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                        </div>
+                    `;
+                    chatMessages.appendChild(typingIndicator);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                    
+                    // After delay, show AI response
+                    setTimeout(() => {
+                        chatMessages.removeChild(typingIndicator);
+                        const randomResponse = aiResponses[Math.floor(Math.random() * aiResponses.length)];
+                        addMessage(randomResponse, 'ai');
+                    }, 1500);
+                }, 500);
+            }
+            
+            // Add message to chat
+            function addMessage(text, sender) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sender}-message`;
+                messageDiv.innerHTML = `
+                    <div class="message-avatar">${sender === 'ai' ? 'NT' : `
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z" fill="currentColor"/>
+                            <path d="M12 14C7.58172 14 4 17.5817 4 22H20C20 17.5817 16.4183 14 12 14Z" fill="currentColor"/>
+                        </svg>
+                    `}</div>
+                    <div class="message-content">${text}</div>
+                `;
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            // Event listeners
+            sendBtn.addEventListener('click', sendMessage);
+            userInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+
+
+
+            
+            // Sample token price ticker animation
+            const tokenPriceElement = document.createElement('div');
+            tokenPriceElement.style.position = 'fixed';
+            tokenPriceElement.style.bottom = '20px';
+            tokenPriceElement.style.right = '20px';
+            tokenPriceElement.style.background = 'linear-gradient(90deg, var(--primary), var(--secondary))';
+            tokenPriceElement.style.color = 'var(--dark)';
+            tokenPriceElement.style.padding = '10px 20px';
+            tokenPriceElement.style.borderRadius = '8px';
+            tokenPriceElement.style.fontWeight = '600';
+            tokenPriceElement.style.boxShadow = '0 4px 15px rgba(153, 69, 255, 0.3)';
+            tokenPriceElement.style.zIndex = '100';
+            tokenPriceElement.textContent = 'NTK: $0.42 ↗ 5.2%';
+            document.body.appendChild(tokenPriceElement);
+            
+            // Animate price changes
+            setInterval(() => {
+                const change = (Math.random() - 0.5) * 0.1;
+                const currentPrice = parseFloat(tokenPriceElement.textContent.split('$')[1].split(' ')[0]);
+                const newPrice = Math.max(0.35, Math.min(0.5, currentPrice + change));
+                const percentChange = ((newPrice - currentPrice) / currentPrice * 100).toFixed(2);
+                const isPositive = percentChange >= 0;
+                
+                tokenPriceElement.textContent = `NTK: $${newPrice.toFixed(2)} ${isPositive ? '↗' : '↘'} ${Math.abs(percentChange)}%`;
+                tokenPriceElement.style.background = isPositive 
+                    ? 'linear-gradient(90deg, var(--primary), var(--secondary))' 
+                    : 'linear-gradient(90deg, #FF4567, #FF7845))';
+            }, 5000);
+        });
+    </script>
+    <script src="node.js"></script>
+</body>
+</html>
+
+
+
+
+                                
